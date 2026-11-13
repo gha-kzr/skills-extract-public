@@ -1,0 +1,14 @@
+AWS/GCP
+ArgoCD
+CI/CD
+Docker
+GCP
+GitHub
+GitOps
+Grafana
+Kubernetes
+Linux
+Prometheus
+Terraform
+automatisation
+cloud

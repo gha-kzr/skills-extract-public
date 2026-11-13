@@ -1,0 +1,15 @@
+Senior Reliability Engineer
+
+Nous recherchons un(e) SRE expérimenté(e) pour renforcer notre infra et nos pipelines de déploiement.
+
+Missions clés :
+
+Concevoir et maintenir des pipelines CI/CD avec GitHub Actions pour fiabiliser et accélérer nos livraisons
+Piloter le déploiement continu via ArgoCD sur nos clusters Kubernetes, dans une logique GitOps
+Industrialiser et versionner notre infrastructure avec Terraform pour garantir sa reproductibilité
+Containeriser les applications avec Docker et optimiser les workflows de build et de release
+Assurer le monitoring et l'observabilité de la prod (Prometheus/Grafana) pour anticiper les incidents
+Administrer nos environnements cloud (AWS/GCP) et systèmes Linux au quotidien
+Profil recherché :
+
+3+ ans d'expérience en environnement Kubernetes/cloud natif, à l'aise avec l'automatisation et la culture GitOps.

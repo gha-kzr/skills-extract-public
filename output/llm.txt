@@ -1,0 +1,10 @@
+GitHub Actions
+ArgoCD
+Kubernetes
+Terraform
+Docker
+Prometheus
+Grafana
+AWS
+GCP
+Linux
