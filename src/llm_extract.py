@@ -10,7 +10,7 @@ from pathlib import Path
 import typer
 from openai import OpenAI
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+from lib import DATA
 
 PROMPT = (
     "Extract the technical skills (tools, languages, platforms, methods) named "
@@ -19,7 +19,12 @@ PROMPT = (
 )
 
 
-def extract(text: str, model: str) -> str:
+def main(
+    offer: Path = DATA / "offer.txt",
+    model: str = typer.Option(..., envvar="LLM_MODEL", help="Model name"),
+):
+    text = offer.read_text(encoding="utf-8")
+
     client = OpenAI()  # picks up OPENAI_BASE_URL and OPENAI_API_KEY
     response = client.chat.completions.create(
         model=model,
@@ -29,14 +34,7 @@ def extract(text: str, model: str) -> str:
             {"role": "user", "content": text},
         ],
     )
-    return response.choices[0].message.content
-
-
-def main(
-    offer: Path = DATA / "offer.txt",
-    model: str = typer.Option(..., envvar="LLM_MODEL", help="Model name"),
-):
-    print(extract(offer.read_text(encoding="utf-8"), model))
+    print(response.choices[0].message.content)
 
 
 if __name__ == "__main__":

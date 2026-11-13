@@ -2,14 +2,15 @@
 
 Companion code of the talk *Un dictionnaire peut-il encore battre ton IA ?*
 (BDX I/O 2026). Four ways to extract the skills of a job offer, each in a
-single short script that prints the skills to the console:
+short script (its `main`) that prints the skills to the console. The helper
+functions are in [`src/lib.py`](src/lib.py):
 
 | Script | Approach |
 |---|---|
-| `src/dict_extract.py` | 1. Dictionary lookup (a list of known skills) |
-| `src/ner_extract.py` | 2. Pretrained NER model (Hugging Face) |
-| `src/llm_extract.py` | 3. Chat LLM through an OpenAI-compatible API |
-| `src/jev_extract.py` | 4. Decision model ("System One", Jev): one yes/no question per n-gram |
+| [`src/dict_extract.py`](src/dict_extract.py) | 1. Dictionary lookup (a list of known skills) |
+| [`src/ner_extract.py`](src/ner_extract.py) | 2. Pretrained NER model (Hugging Face) |
+| [`src/llm_extract.py`](src/llm_extract.py) | 3. Chat LLM through an OpenAI-compatible API |
+| [`src/jev_extract.py`](src/jev_extract.py) | 4. Decision model ("System One", Jev): one yes/no question per n-gram |
 
 The sample offer is `data/offer.txt`; the expected output is a list like
 `Kubernetes, Terraform, ArgoCD, Docker, GitHub Actions, Prometheus, Grafana, AWS, GCP, Linux...`
@@ -61,7 +62,9 @@ your provider's values. `.env` is git-ignored: never commit it.
 Specific options: `--dictionary data/skills.txt` (one skill per line) for the
 dictionary, `--threshold 0.8` for Jev.
 
-### 1. Dictionary: `src/dict_extract.py`
+### 1. Dictionary
+
+Code: [`src/dict_extract.py`](src/dict_extract.py)
 
 A list of known skills (python, kubernetes, dbt...) compared word by word with
 the text of the offer.
@@ -78,7 +81,9 @@ words, in any case. Everything depends on the quality of the dictionary. Limits:
 rebuilt regularly, synonyms and compound names (k8s / kubernetes) must be
 listed, similar skills are not grouped.
 
-### 2. ML / NER: `src/ner_extract.py`
+### 2. ML / NER
+
+Code: [`src/ner_extract.py`](src/ner_extract.py), helpers `find_spans` and `whole_words` in [`src/lib.py`](src/lib.py)
 
 A multilingual model pretrained on the ESCO skill taxonomy
 ([`jjzha/escoxlmr_knowledge_extraction`](https://huggingface.co/jjzha/escoxlmr_knowledge_extraction))
@@ -102,7 +107,9 @@ the model). Limits: the
 boundary between a skill and a domain (conception, finance) is fuzzy, and the
 model is hard to extend to other problems.
 
-### 3. LLM: `src/llm_extract.py`
+### 3. LLM
+
+Code: [`src/llm_extract.py`](src/llm_extract.py)
 
 One call to a chat model (hosted or local) with a prompt.
 
@@ -122,7 +129,9 @@ What matters: the model (and thinking mode), the prompt, the response schema,
 the temperature. Limits: cost (to put in perspective), slowest approach when run
 locally, variable reliability.
 
-### 4. Decision model (System One / Jev): `src/jev_extract.py`
+### 4. Decision model (System One / Jev)
+
+Code: [`src/jev_extract.py`](src/jev_extract.py), helpers `generate_candidates` and `ask_jev` in [`src/lib.py`](src/lib.py)
 
 One call to a *decision model*, similar to an LLM but it answers questions with
 a probability instead of generating text. The offer is sent once as the state,

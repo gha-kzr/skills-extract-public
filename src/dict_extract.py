@@ -7,16 +7,7 @@ from pathlib import Path
 
 import typer
 
-DATA = Path(__file__).resolve().parent.parent / "data"
-
-
-def extract(text: str, dictionary: list[str]) -> list[str]:
-    """The skills of `dictionary` written in `text` (whole word, any case)."""
-    return [
-        skill
-        for skill in dictionary
-        if re.search(rf"(?<!\w){re.escape(skill)}(?!\w)", text, re.IGNORECASE)
-    ]
+from lib import DATA
 
 
 def main(
@@ -24,9 +15,12 @@ def main(
     dictionary: Path = DATA / "skills.txt",  # one skill per line
 ):
     text = offer.read_text(encoding="utf-8")
-    skills = [line.strip() for line in dictionary.read_text(encoding="utf-8").splitlines()]
-    for skill in extract(text, [s for s in skills if s]):
-        print(skill)
+    known_skills = [s.strip() for s in dictionary.read_text(encoding="utf-8").splitlines() if s.strip()]
+
+    for skill in known_skills:
+        # whole word, any case
+        if re.search(rf"(?<!\w){re.escape(skill)}(?!\w)", text, re.IGNORECASE):
+            print(skill)
 
 
 if __name__ == "__main__":
