@@ -1,0 +1,30 @@
+CI/CD
+GitHub
+Actions
+ArgoCD
+Kubernetes
+GitOps
+Terraform
+Docker
+monitoring
+observabilité
+Prometheus
+Grafana
+cloud
+AWS
+GCP
+Linux
+automatisation
+pipelines CI/CD
+GitHub Actions
+déploiement continu
+clusters Kubernetes
+logique GitOps
+Prometheus Grafana
+environnements cloud
+cloud AWS
+AWS GCP
+systèmes Linux
+environnement Kubernetes
+cloud natif
+culture GitOps

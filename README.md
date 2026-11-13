@@ -12,8 +12,12 @@ functions are in [`src/lib.py`](src/lib.py):
 | [`src/llm_extract.py`](src/llm_extract.py) | 3. Chat LLM through an OpenAI-compatible API |
 | [`src/jev_extract.py`](src/jev_extract.py) | 4. Decision model ("System One", Jev): one yes/no question per n-gram |
 
-The sample offer is `data/offer.txt`; the expected output is a list like
-`Kubernetes, Terraform, ArgoCD, Docker, GitHub Actions, Prometheus, Grafana, AWS, GCP, Linux...`
+The sample offer is `data/offer.txt`. The output of each approach on this offer
+is saved in `output/` (one skill per line):
+[`dict.txt`](output/dict.txt), [`ner.txt`](output/ner.txt),
+[`llm.txt`](output/llm.txt) (local `gemma3:4b` through Ollama) and
+[`jev.txt`](output/jev.txt) (threshold 0.8). LLM output may differ between
+models and runs.
 
 ## Quick start
 
