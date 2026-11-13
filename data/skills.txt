@@ -1,0 +1,13 @@
+Kubernetes
+Docker
+Terraform
+ArgoCD
+GitHub Actions
+GitOps
+CI/CD
+Prometheus
+Grafana
+AWS
+GCP
+Linux
+Python

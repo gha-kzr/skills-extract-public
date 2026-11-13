@@ -6,44 +6,45 @@ single short script that prints the skills to the console:
 
 | Script | Approach |
 |---|---|
-| `dict_extract.py` | 1. Dictionary lookup (known skills and aliases) |
-| `ner_extract.py` | 2. Pretrained NER model (Hugging Face) |
-| `llm_extract.py` | 3. Chat LLM through an OpenAI-compatible API |
-| `jev_extract.py` | 4. Decision model ("System One", Jev): one yes/no question per n-gram |
+| `src/dict_extract.py` | 1. Dictionary lookup (a list of known skills) |
+| `src/ner_extract.py` | 2. Pretrained NER model (Hugging Face) |
+| `src/llm_extract.py` | 3. Chat LLM through an OpenAI-compatible API |
+| `src/jev_extract.py` | 4. Decision model ("System One", Jev): one yes/no question per n-gram |
 
-The sample offer is `offer.txt`; the expected output is a list like
+The sample offer is `data/offer.txt`; the expected output is a list like
 `Kubernetes, Terraform, ArgoCD, Docker, GitHub Actions, Prometheus, Grafana, AWS, GCP, Linux...`
 
 ## Quick start
 
 ```bash
-git clone https://github.com/gha-kzr/skills-extract-public && cd skills-extract-public
+git clone <this repo> && cd skills-extract/public
 
 # 1. install uv (once): https://docs.astral.sh/uv/
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 2. run the approaches that need no configuration
-uv run dict_extract.py                            # works offline
-uv run ner_extract.py                             # first run downloads a ~1 GB model
+uv run src/dict_extract.py                        # works offline
+uv run src/ner_extract.py                         # first run downloads a ~1 GB model
 
 # 3. for the LLM and Jev approaches, create your env file and fill it
 cp .env.example .env                              # see the table below
-uv run --env-file .env llm_extract.py             # needs OPENAI_* and LLM_MODEL
-uv run --env-file .env jev_extract.py             # needs TYPESAFE_API_KEY
+uv run --env-file .env src/llm_extract.py         # needs OPENAI_* and LLM_MODEL
+uv run --env-file .env src/jev_extract.py         # needs TYPESAFE_API_KEY
 ```
 
 `uv run` creates the virtual environment and installs the dependencies by
-itself. Every script takes `--offer <file>` to use another offer (default:
-`offer.txt`).
+itself. Run the commands from the root of the repo. Every script takes
+`--offer <file>` to use another offer (default: `data/offer.txt`); `--help`
+lists the other options.
 
 ### Configuration (`.env`)
 
 | Variable | Used by | Value |
 |---|---|---|
-| `OPENAI_BASE_URL` | `llm_extract.py` | endpoint of an OpenAI-compatible API |
-| `OPENAI_API_KEY` | `llm_extract.py` | its token (any non-empty value for Ollama) |
-| `LLM_MODEL` | `llm_extract.py` | model name (or pass `--model`) |
-| `TYPESAFE_API_KEY` | `jev_extract.py` | API key from [typesafe.ai](https://typesafe.ai) |
+| `OPENAI_BASE_URL` | `src/llm_extract.py` | endpoint of an OpenAI-compatible API |
+| `OPENAI_API_KEY` | `src/llm_extract.py` | its token (any non-empty value for Ollama) |
+| `LLM_MODEL` | `src/llm_extract.py` | model name (or pass `--model`) |
+| `TYPESAFE_API_KEY` | `src/jev_extract.py` | API key from [typesafe.ai](https://typesafe.ai) |
 
 For a **free local LLM** with [Ollama](https://ollama.com):
 
@@ -57,10 +58,10 @@ your provider's values. `.env` is git-ignored: never commit it.
 
 ## The four approaches
 
-Dictionary-specific options: `--dict data/skills.csv` (columns `skill,aliases`,
-several aliases separated by `|`). Jev-specific option: `--threshold 0.8`.
+Specific options: `--dictionary data/skills.txt` (one skill per line) for the
+dictionary, `--threshold 0.8` for Jev.
 
-### 1. Dictionary: `dict_extract.py`
+### 1. Dictionary: `src/dict_extract.py`
 
 A list of known skills (python, kubernetes, dbt...) compared word by word with
 the text of the offer.
@@ -71,12 +72,13 @@ for word in offer_text.split():
         skills.add(word)
 ```
 
-Everything depends on the quality of the dictionary. Limits: no context ("C",
+The demo dictionary is `data/skills.txt`, one skill per line, matched as whole
+words, in any case. Everything depends on the quality of the dictionary. Limits: no context ("C",
 "less" or "vite" are also ordinary words), the dictionary must be enriched or
 rebuilt regularly, synonyms and compound names (k8s / kubernetes) must be
 listed, similar skills are not grouped.
 
-### 2. ML / NER: `ner_extract.py`
+### 2. ML / NER: `src/ner_extract.py`
 
 A multilingual model pretrained on the ESCO skill taxonomy
 ([`jjzha/escoxlmr_knowledge_extraction`](https://huggingface.co/jjzha/escoxlmr_knowledge_extraction))
@@ -93,11 +95,14 @@ for word, tag in NER_model(offer_text):
         skills.add(word)
 ```
 
-No retraining needed (it detects tools newer than the model). Limits: the
+The script groups consecutive `B`/`I` tokens into one skill ("Apache Kafka"),
+drops the ones the model is not confident about (average score below 0.7) and
+widens them to whole words. No retraining needed (it detects tools newer than
+the model). Limits: the
 boundary between a skill and a domain (conception, finance) is fuzzy, and the
 model is hard to extend to other problems.
 
-### 3. LLM: `llm_extract.py`
+### 3. LLM: `src/llm_extract.py`
 
 One call to a chat model (hosted or local) with a prompt.
 
@@ -117,7 +122,7 @@ What matters: the model (and thinking mode), the prompt, the response schema,
 the temperature. Limits: cost (to put in perspective), slowest approach when run
 locally, variable reliability.
 
-### 4. Decision model (System One / Jev): `jev_extract.py`
+### 4. Decision model (System One / Jev): `src/jev_extract.py`
 
 One call to a *decision model*, similar to an LLM but it answers questions with
 a probability instead of generating text. The offer is sent once as the state,
