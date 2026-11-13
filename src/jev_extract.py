@@ -4,9 +4,9 @@ The offer is sent once as the `state`; each n-gram is one yes/no question
 ("is X a technology, tool, technical concept or method?") answered with a
 probability. We keep the n-grams above a threshold.
 
-Reads TYPESAFE_API_KEY from the environment.
+Reads TYPESAFE_API_KEY from the environment or .env.
 
-Usage: uv run --env-file .env src/jev_extract.py [--offer data/offer.txt] [--threshold 0.8]
+Usage: uv run src/jev_extract.py [--offer data/offer.txt] [--threshold 0.8]
 """
 from pathlib import Path
 

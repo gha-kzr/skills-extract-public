@@ -1,16 +1,16 @@
 """LLM extraction: ask a chat model for the skills in the offer.
 
 Works with any OpenAI-compatible endpoint (hosted API or local Ollama).
-Reads OPENAI_BASE_URL, OPENAI_API_KEY and LLM_MODEL from the environment.
+Reads OPENAI_BASE_URL, OPENAI_API_KEY and LLM_MODEL from the environment or .env.
 
-Usage: uv run --env-file .env src/llm_extract.py [--offer data/offer.txt] [--model <name>]
+Usage: uv run src/llm_extract.py [--offer data/offer.txt] [--model <name>]
 """
 from pathlib import Path
 
 import typer
 from openai import OpenAI
 
-from lib import DATA
+from lib import DATA, require_env
 
 PROMPT = (
     "Extract the technical skills (tools, languages, platforms, methods) named "
@@ -23,6 +23,7 @@ def main(
     offer: Path = DATA / "offer.txt",
     model: str = typer.Option(..., envvar="LLM_MODEL", help="Model name"),
 ):
+    require_env("OPENAI_API_KEY")
     text = offer.read_text(encoding="utf-8")
 
     client = OpenAI()  # picks up OPENAI_BASE_URL and OPENAI_API_KEY

@@ -22,7 +22,7 @@ models and runs.
 ## Quick start
 
 ```bash
-git clone <this repo> && cd skills-extract/public
+git clone https://github.com/gha-kzr/skills-extract-public && cd skills-extract-public
 
 # 1. install uv (once): https://docs.astral.sh/uv/
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -32,9 +32,10 @@ uv run src/dict_extract.py                        # works offline
 uv run src/ner_extract.py                         # first run downloads a ~1 GB model
 
 # 3. for the LLM and Jev approaches, create your env file and fill it
+#    (.env is loaded automatically)
 cp .env.example .env                              # see the table below
-uv run --env-file .env src/llm_extract.py         # needs OPENAI_* and LLM_MODEL
-uv run --env-file .env src/jev_extract.py         # needs TYPESAFE_API_KEY
+uv run src/llm_extract.py                         # needs OPENAI_* and LLM_MODEL
+uv run src/jev_extract.py                         # needs TYPESAFE_API_KEY
 ```
 
 `uv run` creates the virtual environment and installs the dependencies by

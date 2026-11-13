@@ -10,7 +10,19 @@ import urllib.request
 from functools import cache
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parent.parent / "data"
+from dotenv import load_dotenv
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+
+load_dotenv(ROOT / ".env")  # optional: variables already set in the shell win
+
+
+def require_env(*names: str) -> None:
+    """Stop with a clear message if an environment variable is missing."""
+    missing = [name for name in names if not os.environ.get(name)]
+    if missing:
+        raise SystemExit(f"Missing {', '.join(missing)}: set it in .env (see .env.example).")
 
 
 # ---------------------------------------------------------------- NER
@@ -116,6 +128,7 @@ def ask_jev(text: str, candidates: list[str]) -> list[float]:
             for i, c in enumerate(candidates)
         },
     }
+    require_env("TYPESAFE_API_KEY")
     request = urllib.request.Request(
         JEV_URL,
         data=json.dumps(payload).encode(),
